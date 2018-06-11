@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"io/ioutil"
 	"log"
+	"math/rand"
 	"os"
+	"time"
 )
 
 func loadImage(filename string) image.Image {
@@ -31,6 +34,21 @@ func saveImage(filename string, img image.Image) {
 	}
 }
 
+func randImage() {
+	fmt.Println("Reading from the meme folder!")
+	files, err := ioutil.ReadDir("./memes")
+	if err != nil {
+		log.Fatalf("ioutil.ReadDir failed %v", err)
+	}
+	rand.Seed(time.Now().Unix())
+	fmt.Println("Picking a random spicy meme!")
+	randomFile := files[rand.Intn(len(files))]
+
+	fmt.Println(randomFile.Name())
+	// meme := loadImage(randomFile.Name())
+}
+
 func main() {
-	fmt.Print("Welcome to the Deep Fryer")
+	fmt.Println("Welcome to the Deep Fryer")
+	randImage()
 }
