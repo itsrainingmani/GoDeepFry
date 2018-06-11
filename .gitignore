@@ -16,6 +16,3 @@
 
 # PRAW ini file
 praw.ini
-
-# Pipenv
-Pipfile.lock
