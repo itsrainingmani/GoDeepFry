@@ -14,6 +14,7 @@ import (
 	"github.com/disintegration/imaging"
 )
 
+// loadImage takes in a filename, reads the image if any from the location and returns it
 func loadImage(filename string) image.Image {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -26,6 +27,7 @@ func loadImage(filename string) image.Image {
 	return img
 }
 
+// saveImage takes in a filename, an image and a quality index and saves the image to th specified location
 func saveImage(filename string, img image.Image, qual int) {
 	err := imaging.Save(img, filename, imaging.JPEGQuality(qual))
 	if err != nil {
@@ -33,6 +35,7 @@ func saveImage(filename string, img image.Image, qual int) {
 	}
 }
 
+// randMeme returns a random meme image from the memes folder
 func randMeme() image.Image {
 	fmt.Println("Reading from the meme folder!")
 	files, err := ioutil.ReadDir("./memes")
@@ -44,8 +47,9 @@ func randMeme() image.Image {
 	randomFile := files[rand.Intn(len(files))]
 
 	fmt.Println(randomFile.Name())
-	// meme := loadImage(randomFile.Name())
 
+	// We need to construct a string array so that we can join the contents to make
+	// a filename that includes the folder location
 	var memeLoc []string
 	memeLoc = append(memeLoc, "./memes/")
 	memeLoc = append(memeLoc, randomFile.Name())
