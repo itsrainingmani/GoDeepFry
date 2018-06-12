@@ -60,6 +60,8 @@ func main() {
 	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
 
+	// guasNoiseImgPtr := flag.Bool("g", false, "Add Gaussian noise to a test image")
+
 	flag.Parse()
 
 	if *randImgPtr == true && *specImgPtr == "" {

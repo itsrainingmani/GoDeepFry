@@ -19,10 +19,11 @@ def get_filename_from_url(url):
 reddit = praw.Reddit('GoDeepFry', user_agent='windows:GoDeepFry:v0.1 (by /u/L-king)')
 
 subreddit = reddit.subreddit('dankmemes')
+folder = "./memes/"
 for submission in subreddit.top(limit=100):
     # pprint.pprint(vars(submission))
     if submission.is_video == False and 'gifv' not in submission.url and 'gif' not in submission.url:
         if is_downloadable(submission.url):
             r = requests.get(submission.url, allow_redirects=True)
-            filename = get_filename_from_url(submission.url)
+            filename = folder + get_filename_from_url(submission.url)
             open(filename, 'wb').write(r.content)
