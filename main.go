@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"image"
 	"io/ioutil"
@@ -54,10 +55,19 @@ func randMeme() image.Image {
 
 func main() {
 	fmt.Println("Welcome to the Deep Fryer")
-	rImg := randMeme()
 
-	rImg = imaging.AdjustContrast(rImg, 40)
-	rImg = imaging.Sharpen(rImg, 7)
+	randImgPtr := flag.Bool("r", false, "Random DeepFry")
 
-	saveImage("./deepfried/testImage.jpg", rImg)
+	flag.Parse()
+
+	if *randImgPtr == true {
+		fmt.Println("Generating random deepfry image!")
+		rImg := randMeme()
+
+		rImg = imaging.AdjustContrast(rImg, 40)
+		rImg = imaging.Sharpen(rImg, 7)
+		saveImage("./deepfried/testImage.jpg", rImg)
+	} else {
+		fmt.Println("No flags selected!")
+	}
 }
