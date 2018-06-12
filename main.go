@@ -26,8 +26,8 @@ func loadImage(filename string) image.Image {
 	return img
 }
 
-func saveImage(filename string, img image.Image) {
-	err := imaging.Save(img, filename)
+func saveImage(filename string, img image.Image, qual int) {
+	err := imaging.Save(img, filename, imaging.JPEGQuality(qual))
 	if err != nil {
 		log.Fatalf("failed to save image: %v", err)
 	}
@@ -57,17 +57,25 @@ func main() {
 	fmt.Println("Welcome to the Deep Fryer")
 
 	randImgPtr := flag.Bool("r", false, "Random DeepFry")
+	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
+	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
 
 	flag.Parse()
 
-	if *randImgPtr == true {
+	if *randImgPtr == true && *specImgPtr == "" {
 		fmt.Println("Generating random deepfry image!")
 		rImg := randMeme()
 
-		rImg = imaging.AdjustContrast(rImg, 40)
-		rImg = imaging.Sharpen(rImg, 7)
-		saveImage("./deepfried/testImage.jpg", rImg)
+		rImg = imaging.AdjustContrast(rImg, 65)
+		rImg = imaging.Sharpen(rImg, 10)
+		saveImage("./deepfried/testImage.jpg", rImg, *jpegQualPtr)
+	} else if *specImgPtr != "" {
+		fmt.Println("Deep Frying according to recipe")
+		rImg := loadImage(*specImgPtr)
+		rImg = imaging.AdjustContrast(rImg, 65)
+		rImg = imaging.Sharpen(rImg, 10)
+		saveImage("./deepfried/testImage.jpg", rImg, *jpegQualPtr)
 	} else {
-		fmt.Println("No flags selected!")
+		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
 }
