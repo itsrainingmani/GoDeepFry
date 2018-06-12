@@ -16,3 +16,6 @@
 
 # PRAW ini file
 praw.ini
+
+# DeepFried Test Images
+deepfried/testImage.jpg

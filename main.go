@@ -3,12 +3,14 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/png"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
+
+	"github.com/disintegration/imaging"
 )
 
 func loadImage(filename string) image.Image {
@@ -24,17 +26,13 @@ func loadImage(filename string) image.Image {
 }
 
 func saveImage(filename string, img image.Image) {
-	f, err := os.Create(filename)
+	err := imaging.Save(img, filename)
 	if err != nil {
-		log.Fatalf("os.Create failed %v", err)
-	}
-	err = png.Encode(f, img)
-	if err != nil {
-		log.Fatalf("png.Encode failed %v", err)
+		log.Fatalf("failed to save image: %v", err)
 	}
 }
 
-func randImage() {
+func randMeme() image.Image {
 	fmt.Println("Reading from the meme folder!")
 	files, err := ioutil.ReadDir("./memes")
 	if err != nil {
@@ -46,9 +44,20 @@ func randImage() {
 
 	fmt.Println(randomFile.Name())
 	// meme := loadImage(randomFile.Name())
+
+	var memeLoc []string
+	memeLoc = append(memeLoc, "./memes/")
+	memeLoc = append(memeLoc, randomFile.Name())
+
+	return loadImage(strings.Join(memeLoc, ""))
 }
 
 func main() {
 	fmt.Println("Welcome to the Deep Fryer")
-	randImage()
+	rImg := randMeme()
+
+	rImg = imaging.AdjustContrast(rImg, 40)
+	rImg = imaging.Sharpen(rImg, 7)
+
+	saveImage("./deepfried/testImage.jpg", rImg)
 }
