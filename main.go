@@ -11,6 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tsmanikandan/GoDeepFry/noise"
+
+	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 )
 
@@ -63,6 +66,7 @@ func main() {
 	randImgPtr := flag.Bool("r", false, "Random DeepFry")
 	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
+	spNoisePtr := flag.Float64("s", 0, "Amount of Salt and Pepper Noise")
 
 	// guasNoiseImgPtr := flag.Bool("g", false, "Add Gaussian noise to a test image")
 
@@ -78,9 +82,15 @@ func main() {
 	} else if *specImgPtr != "" {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := loadImage(*specImgPtr)
-		rImg = imaging.AdjustContrast(rImg, 65)
-		rImg = imaging.Sharpen(rImg, 10)
-		saveImage("./deepfried/testImage.jpg", rImg, *jpegQualPtr)
+		g := gift.New(
+			gift.Saturation(50),
+			gift.Contrast(40),
+			gift.Gamma(1.5),
+		)
+		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
+
+		g.Draw(dst, rImg)
+		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
