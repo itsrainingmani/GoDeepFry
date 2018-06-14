@@ -4,13 +4,14 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"image/color"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/tsmanikandan/GoDeepFry/noise"
 
 	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
@@ -59,35 +60,6 @@ func randMeme() image.Image {
 	return loadImage(strings.Join(memeLoc, ""))
 }
 
-// func makeFilters(satInc float32, contInc float32, gamInc float32) *gift.GIFT {
-// 	return gift.New(
-// 		gift.Saturation(satInc),
-// 		gift.Contrast(contInc),
-// 		gift.Gamma(gamInc),
-// 	)
-// }
-
-func saltAndPepperNoise(src image.RGBA, prob float32) *image.RGBA {
-	spImg := image.NewRGBA(src.Bounds())
-	threshold := 1 - prob
-	rand.Seed(time.Now().Unix())
-
-	for x := 0; x < spImg.Bounds().Dx(); x++ {
-		for y := 0; y < spImg.Bounds().Dy(); y++ {
-
-			randProb := rand.Float32()
-			if randProb < prob {
-				spImg.Set(x, y, color.RGBA{0, 0, 0, 0})
-			} else if randProb > threshold {
-				spImg.Set(x, y, color.RGBA{255, 255, 255, 0})
-			} else {
-				spImg.Set(x, y, src.At(x, y))
-			}
-		}
-	}
-	return spImg
-}
-
 func main() {
 	fmt.Println("Welcome to the Deep Fryer")
 
@@ -118,7 +90,7 @@ func main() {
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
-		saveImage("./deepfried/testImage.jpg", saltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
+		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
