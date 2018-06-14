@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"image/color"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -66,12 +67,34 @@ func randMeme() image.Image {
 // 	)
 // }
 
+func saltAndPepperNoise(src image.RGBA, prob float32) *image.RGBA {
+	spImg := image.NewRGBA(src.Bounds())
+	threshold := 1 - prob
+	rand.Seed(time.Now().Unix())
+
+	for x := 0; x < spImg.Bounds().Dx(); x++ {
+		for y := 0; y < spImg.Bounds().Dy(); y++ {
+
+			randProb := rand.Float32()
+			if randProb < prob {
+				spImg.Set(x, y, color.RGBA{0, 0, 0, 0})
+			} else if randProb > threshold {
+				spImg.Set(x, y, color.RGBA{255, 255, 255, 0})
+			} else {
+				spImg.Set(x, y, src.At(x, y))
+			}
+		}
+	}
+	return spImg
+}
+
 func main() {
 	fmt.Println("Welcome to the Deep Fryer")
 
 	randImgPtr := flag.Bool("r", false, "Random DeepFry")
 	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
+	spNoisePtr := flag.Float64("s", 0, "Amount of Salt and Pepper Noise")
 
 	// guasNoiseImgPtr := flag.Bool("g", false, "Add Gaussian noise to a test image")
 
@@ -88,13 +111,14 @@ func main() {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := loadImage(*specImgPtr)
 		g := gift.New(
-			gift.Saturation(20),
-			gift.Contrast(70),
-			gift.Gamma(2.5),
+			gift.Saturation(50),
+			gift.Contrast(40),
+			gift.Gamma(1.5),
 		)
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
+
 		g.Draw(dst, rImg)
-		saveImage("./deepfried/testImage.jpg", dst, *jpegQualPtr)
+		saveImage("./deepfried/testImage.jpg", saltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
