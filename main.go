@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/disintegration/gift"
 	"github.com/disintegration/imaging"
 )
 
@@ -57,6 +58,14 @@ func randMeme() image.Image {
 	return loadImage(strings.Join(memeLoc, ""))
 }
 
+// func makeFilters(satInc float32, contInc float32, gamInc float32) *gift.GIFT {
+// 	return gift.New(
+// 		gift.Saturation(satInc),
+// 		gift.Contrast(contInc),
+// 		gift.Gamma(gamInc),
+// 	)
+// }
+
 func main() {
 	fmt.Println("Welcome to the Deep Fryer")
 
@@ -78,9 +87,14 @@ func main() {
 	} else if *specImgPtr != "" {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := loadImage(*specImgPtr)
-		rImg = imaging.AdjustContrast(rImg, 65)
-		rImg = imaging.Sharpen(rImg, 10)
-		saveImage("./deepfried/testImage.jpg", rImg, *jpegQualPtr)
+		g := gift.New(
+			gift.Saturation(20),
+			gift.Contrast(70),
+			gift.Gamma(2.5),
+		)
+		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
+		g.Draw(dst, rImg)
+		saveImage("./deepfried/testImage.jpg", dst, *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
