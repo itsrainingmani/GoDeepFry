@@ -83,14 +83,15 @@ func main() {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := loadImage(*specImgPtr)
 		g := gift.New(
-			gift.Saturation(50),
-			gift.Contrast(40),
-			gift.Gamma(1.5),
+			gift.Saturation(60),
+			gift.Contrast(60),
+			gift.Gamma(1.6),
 		)
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
-		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
+		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
+		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst), *spNoisePtr), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
