@@ -31,15 +31,15 @@ func SaltAndPepperNoise(src image.RGBA, prob float64) *image.RGBA {
 }
 
 // GaussianNoise is a function that adds guassian white noise to an image
-func GaussianNoise(src image.RGBA) *image.RGBA {
+func GaussianNoise(src image.RGBA, stddev float64) *image.RGBA {
 	rand.Seed(time.Now().Unix())
 	gImg := image.NewRGBA(src.Bounds())
 
 	for x := 0; x < src.Bounds().Dx(); x++ {
 		for y := 0; y < src.Bounds().Dy(); y++ {
-			gaussProb := [3]uint32{uint32(rand.NormFloat64()), uint32(rand.NormFloat64()), uint32(rand.NormFloat64())}
+			gaussProb := [3]float64{rand.NormFloat64() * stddev, rand.NormFloat64() * stddev, rand.NormFloat64() * stddev}
 			r, g, b, a := src.At(x, y).RGBA()
-			newR, newG, newB := uint8(r+gaussProb[0]), uint8(g+gaussProb[1]), uint8(b+gaussProb[2])
+			newR, newG, newB := uint8(float64(r)+gaussProb[0]), uint8(float64(g)+gaussProb[1]), uint8(float64(b)+gaussProb[2])
 			gImg.Set(x, y, color.RGBA{newR, newG, newB, uint8(a)})
 		}
 	}

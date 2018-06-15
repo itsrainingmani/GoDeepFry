@@ -67,6 +67,7 @@ func main() {
 	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
 	spNoisePtr := flag.Float64("s", 0, "Amount of Salt and Pepper Noise")
+	gausPtr := flag.Float64("g", 1, "Std Dev of Gaussian distribution")
 
 	// guasNoiseImgPtr := flag.Bool("g", false, "Add Gaussian noise to a test image")
 
@@ -84,14 +85,14 @@ func main() {
 		rImg := loadImage(*specImgPtr)
 		g := gift.New(
 			gift.Saturation(60),
-			gift.Contrast(60),
+			gift.Contrast(50),
 			gift.Gamma(1.6),
 		)
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
 		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
-		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst), *spNoisePtr), *jpegQualPtr)
+		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
