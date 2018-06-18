@@ -77,9 +77,25 @@ func main() {
 		fmt.Println("Generating random deepfry image!")
 		rImg := randMeme()
 
-		rImg = imaging.AdjustContrast(rImg, 65)
-		rImg = imaging.Sharpen(rImg, 10)
-		saveImage("./deepfried/testImage.jpg", rImg, *jpegQualPtr)
+		rand.Seed(time.Now().Unix())
+		satVal := (rand.Float32() * 25) + 45
+		conVal := (rand.Float32() * 20) + 50
+		gamVal := (rand.Float32() * 0.8) + 1
+		gaussVal := (rand.Float64()) + 0.5
+		spVal := (rand.Float64() * 0.008) + 0.014
+		jpegVal := rand.Intn(4) + 3
+
+		fmt.Print(satVal, conVal, gamVal, gaussVal, spVal, jpegVal)
+
+		g := gift.New(
+			gift.Saturation(satVal),
+			gift.Contrast(conVal),
+			gift.Gamma(gamVal),
+		)
+		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
+
+		g.Draw(dst, rImg)
+		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
 	} else if *specImgPtr != "" {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := loadImage(*specImgPtr)
