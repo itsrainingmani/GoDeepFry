@@ -57,8 +57,14 @@ func getAssetNames(assetDir string) []string {
 }
 
 func loadRandomAssets(assetNames []string, numToLoad int) []image.Image {
-	// rand.Seed(time.Now().Unix())
+
 	randAssets := []image.Image{}
+
+	// Since Golang does not come with pre-built support for a set type this is
+	// one possible workaround. This creates a map of int to an empty struct.
+	// when a generate a random value, we check if that key has a struct, if it does
+	// then the element exists. if not we add a new struct. This is more space efficient
+	// than making a map of int to bool.
 	set := make(map[int]struct{})
 
 	for {
@@ -81,13 +87,14 @@ func loadRandomAssets(assetNames []string, numToLoad int) []image.Image {
 }
 
 func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) image.Point {
-	// randPos := []pos{}
+
 	DX := srcBnds.Dx()
 	DY := srcBnds.Dy()
 
 	dx := emjBnds.Dx()
 	dy := emjBnds.Dy()
-	// rand.Seed(time.Now().Unix())
+
+	// This is to ensure that the emoji's position does not cross the edges of the source image
 	randX := rand.Intn(DX-dx) + dx/2
 	randY := rand.Intn(DY-dy) + dy/2
 	return image.Pt(randX, randY)
@@ -98,6 +105,7 @@ func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) i
 func AddEmojis(src image.Image) *image.RGBA {
 	rand.Seed(time.Now().Unix())
 
+	// Makes a new empty image and then copies over the source
 	emoImg := image.NewRGBA(src.Bounds())
 	gift.New().Draw(emoImg, src)
 
@@ -111,6 +119,7 @@ func AddEmojis(src image.Image) *image.RGBA {
 	fmt.Println("Loading Random assets!")
 	randAssets := loadRandomAssets(assets, numAssetsToUse)
 
+	// Loop over the random assets and add them to the new image at random positions
 	fmt.Println("Adding random emojis to the image!")
 	for _, rAss := range randAssets {
 		randPos := genRandomEmojiPositions(rAss.Bounds(), src.Bounds())

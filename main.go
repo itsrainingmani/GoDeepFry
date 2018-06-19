@@ -73,7 +73,6 @@ func main() {
 		)
 
 		rImg = emoji.AddEmojis(rImg)
-
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
