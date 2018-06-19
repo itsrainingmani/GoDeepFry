@@ -78,7 +78,7 @@ func loadRandomAssets(assetNames []string, numToLoad int) []image.Image {
 	return randAssets
 }
 
-func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) image.Pt {
+func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) image.Point {
 	// randPos := []pos{}
 	DX := srcBnds.Dx()
 	DY := srcBnds.Dy()
@@ -104,9 +104,9 @@ func AddEmojis(src image.Image) *image.RGBA {
 
 	randAssets := loadRandomAssets(assets, numAssetsToUse)
 
-	for i := randAssets {
-		randPos := genRandomEmojiPositions(randAssets[i].Bounds, src.Bounds)
-		gift.New().DrawAt(emoImg, randAssets[i], randPos, gift.OverOperator)
+	for _, rAss := range randAssets {
+		randPos := genRandomEmojiPositions(rAss.Bounds(), src.Bounds())
+		gift.New().DrawAt(emoImg, rAss, randPos, gift.OverOperator)
 	}
 
 	return emoImg

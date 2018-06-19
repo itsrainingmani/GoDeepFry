@@ -71,6 +71,7 @@ func main() {
 			gift.Contrast(conVal),
 			gift.Gamma(gamVal),
 		)
+
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
