@@ -77,7 +77,7 @@ func main() {
 		emoji.SaveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
 	} else if *specImgPtr != "" {
 		fmt.Println("Deep Frying according to recipe")
-		rImg := loadImage(*specImgPtr)
+		rImg := emoji.LoadImage(*specImgPtr)
 		g := gift.New(
 			gift.Saturation(60),
 			gift.Contrast(50),
