@@ -64,13 +64,15 @@ func main() {
 		spVal := (rand.Float64() * 0.008) + 0.014
 		jpegVal := rand.Intn(4) + 3
 
-		fmt.Print(satVal, conVal, gamVal, gaussVal, spVal, jpegVal)
+		fmt.Println(satVal, conVal, gamVal, gaussVal, spVal, jpegVal)
 
 		g := gift.New(
 			gift.Saturation(satVal),
 			gift.Contrast(conVal),
 			gift.Gamma(gamVal),
 		)
+
+		rImg = emoji.AddEmojis(rImg)
 
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 

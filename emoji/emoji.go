@@ -3,11 +3,13 @@
 package emoji
 
 import (
+	"fmt"
 	"image"
 	"io/ioutil"
 	"log"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/disintegration/gift"
@@ -48,14 +50,14 @@ func getAssetNames(assetDir string) []string {
 	}
 
 	for _, file := range files {
-		filenames = append(filenames, file.Name())
+		filenames = append(filenames, strings.Join([]string{assetDir, file.Name()}, ""))
 	}
 
 	return filenames
 }
 
 func loadRandomAssets(assetNames []string, numToLoad int) []image.Image {
-	rand.Seed(time.Now().Unix())
+	// rand.Seed(time.Now().Unix())
 	randAssets := []image.Image{}
 	set := make(map[int]struct{})
 
@@ -85,7 +87,7 @@ func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) i
 
 	dx := emjBnds.Dx()
 	dy := emjBnds.Dy()
-	rand.Seed(time.Now().Unix())
+	// rand.Seed(time.Now().Unix())
 	randX := rand.Intn(DX-dx) + dx/2
 	randY := rand.Intn(DY-dy) + dy/2
 	return image.Pt(randX, randY)
@@ -99,11 +101,17 @@ func AddEmojis(src image.Image) *image.RGBA {
 	emoImg := image.NewRGBA(src.Bounds())
 	gift.New().Draw(emoImg, src)
 
-	assets := getAssetNames("../assets/")
+	fmt.Println("Getting Asset names")
+	assets := getAssetNames("./assets/")
+	fmt.Println(assets)
 	numAssetsToUse := rand.Intn(len(assets))
 
+	fmt.Println("Number of assets to use - ", numAssetsToUse)
+
+	fmt.Println("Loading Random assets!")
 	randAssets := loadRandomAssets(assets, numAssetsToUse)
 
+	fmt.Println("Adding random emojis to the image!")
 	for _, rAss := range randAssets {
 		randPos := genRandomEmojiPositions(rAss.Bounds(), src.Bounds())
 		gift.New().DrawAt(emoImg, rAss, randPos, gift.OverOperator)
