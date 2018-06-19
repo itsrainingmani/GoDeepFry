@@ -112,7 +112,7 @@ func AddEmojis(src image.Image) *image.RGBA {
 	fmt.Println("Getting Asset names")
 	assets := getAssetNames("./assets/")
 	fmt.Println(assets)
-	numAssetsToUse := rand.Intn(len(assets))
+	numAssetsToUse := rand.Intn(len(assets)-1) + 1
 
 	fmt.Println("Number of assets to use - ", numAssetsToUse)
 
