@@ -86,6 +86,29 @@ func loadRandomAssets(assetNames []string, numToLoad int) []image.Image {
 	return randAssets
 }
 
+func loadMultipleRandomAssets(assetNames []string) []image.Image {
+	randAssets := []image.Image{}
+
+	assetMap := make(map[string]int)
+
+	for _, asset := range assetNames {
+		randValue := rand.Intn(2) + 1
+		assetMap[asset] = randValue
+	}
+
+	fmt.Println(assetMap)
+
+	for k, v := range assetMap {
+		if v != 0 {
+			for i := 0; i < v; i++ {
+				randAssets = append(randAssets, LoadImage(k))
+			}
+		}
+	}
+
+	return randAssets
+}
+
 func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) image.Point {
 
 	DX := srcBnds.Dx()
@@ -117,7 +140,9 @@ func AddEmojis(src image.Image) *image.RGBA {
 	fmt.Println("Number of assets to use - ", numAssetsToUse)
 
 	fmt.Println("Loading Random assets!")
-	randAssets := loadRandomAssets(assets, numAssetsToUse)
+	// loadMultipleRandomAssets(assets)
+	// randAssets := loadRandomAssets(assets, numAssetsToUse)
+	randAssets := loadMultipleRandomAssets(assets)
 
 	// Loop over the random assets and add them to the new image at random positions
 	fmt.Println("Adding random emojis to the image!")
