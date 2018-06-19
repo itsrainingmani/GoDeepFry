@@ -7,36 +7,14 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
-	"os"
 	"strings"
 	"time"
 
+	"github.com/tsmanikandan/GoDeepFry/emoji"
 	"github.com/tsmanikandan/GoDeepFry/noise"
 
 	"github.com/disintegration/gift"
-	"github.com/disintegration/imaging"
 )
-
-// loadImage takes in a filename, reads the image if any from the location and returns it
-func loadImage(filename string) image.Image {
-	f, err := os.Open(filename)
-	if err != nil {
-		log.Fatalf("os.Open failed: %v", err)
-	}
-	img, _, err := image.Decode(f)
-	if err != nil {
-		log.Fatalf("image.Decode failed: %v", err)
-	}
-	return img
-}
-
-// saveImage takes in a filename, an image and a quality index and saves the image to th specified location
-func saveImage(filename string, img image.Image, qual int) {
-	err := imaging.Save(img, filename, imaging.JPEGQuality(qual))
-	if err != nil {
-		log.Fatalf("failed to save image: %v", err)
-	}
-}
 
 // randMeme returns a random meme image from the memes folder
 func randMeme() image.Image {
@@ -57,7 +35,7 @@ func randMeme() image.Image {
 	memeLoc = append(memeLoc, "./memes/")
 	memeLoc = append(memeLoc, randomFile.Name())
 
-	return loadImage(strings.Join(memeLoc, ""))
+	return emoji.LoadImage(strings.Join(memeLoc, ""))
 }
 
 func main() {
@@ -76,7 +54,7 @@ func main() {
 	if *randImgPtr == true && *specImgPtr != "" {
 		fmt.Println("Generating random deepfry image!")
 		// rImg := randMeme()
-		rImg := loadImage(*specImgPtr)
+		rImg := emoji.LoadImage(*specImgPtr)
 
 		rand.Seed(time.Now().Unix())
 		satVal := (rand.Float32() * 25) + 45
@@ -96,7 +74,7 @@ func main() {
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
-		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
+		emoji.SaveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
 	} else if *specImgPtr != "" {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := loadImage(*specImgPtr)
@@ -109,7 +87,7 @@ func main() {
 
 		g.Draw(dst, rImg)
 		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
-		saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
+		emoji.SaveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}
