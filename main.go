@@ -73,9 +73,10 @@ func main() {
 
 	flag.Parse()
 
-	if *randImgPtr == true && *specImgPtr == "" {
+	if *randImgPtr == true && *specImgPtr != "" {
 		fmt.Println("Generating random deepfry image!")
-		rImg := randMeme()
+		// rImg := randMeme()
+		rImg := loadImage(*specImgPtr)
 
 		rand.Seed(time.Now().Unix())
 		satVal := (rand.Float32() * 25) + 45
