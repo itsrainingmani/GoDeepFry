@@ -1,4 +1,4 @@
-package noise
+package effects
 
 import (
 	"image"
