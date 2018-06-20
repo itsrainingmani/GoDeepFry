@@ -10,8 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tsmanikandan/GoDeepFry/emoji"
-	"github.com/tsmanikandan/GoDeepFry/noise"
+	"github.com/tsmanikandan/GoDeepFry/effects"
 
 	"github.com/disintegration/gift"
 )
@@ -35,7 +34,7 @@ func randMeme() image.Image {
 	memeLoc = append(memeLoc, "./memes/")
 	memeLoc = append(memeLoc, randomFile.Name())
 
-	return emoji.LoadImage(strings.Join(memeLoc, ""))
+	return effects.LoadImage(strings.Join(memeLoc, ""))
 }
 
 func main() {
@@ -54,7 +53,7 @@ func main() {
 	if *randImgPtr == true && *specImgPtr != "" {
 		fmt.Println("Generating random deepfry image!")
 		// rImg := randMeme()
-		rImg := emoji.LoadImage(*specImgPtr)
+		rImg := effects.LoadImage(*specImgPtr)
 
 		rand.Seed(time.Now().Unix())
 		satVal := (rand.Float32() * 25) + 45
@@ -72,14 +71,14 @@ func main() {
 			gift.Gamma(gamVal),
 		)
 
-		rImg = emoji.AddEmojis(rImg)
+		rImg = effects.AddEmojis(rImg)
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
-		emoji.SaveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
+		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
 	} else if *specImgPtr != "" {
 		fmt.Println("Deep Frying according to recipe")
-		rImg := emoji.LoadImage(*specImgPtr)
+		rImg := effects.LoadImage(*specImgPtr)
 		g := gift.New(
 			gift.Saturation(60),
 			gift.Contrast(50),
@@ -89,7 +88,7 @@ func main() {
 
 		g.Draw(dst, rImg)
 		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
-		emoji.SaveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*noise.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
+		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
 	} else {
 		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
 	}

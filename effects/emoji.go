@@ -1,6 +1,6 @@
-// Package emoji contains utility functions for adding emojis
+// Package effects contains utility functions for adding emojis
 // to a given image
-package emoji
+package effects
 
 import (
 	"fmt"
