@@ -5,6 +5,7 @@ package emoji
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -16,9 +17,23 @@ import (
 	"github.com/disintegration/imaging"
 )
 
-type pos struct {
-	x, y int
-}
+// type resizeby struct {
+// 	width    int
+// 	height   int
+// 	resample gift.Resampling
+// }
+
+// type rotateby struct {
+// 	angle      float32
+// 	background color.Color
+// 	interpol   gift.Interpolation
+// }
+// type emoji struct {
+// 	asset   image.Image
+// 	randpos image.Point
+// 	resize  resizeby
+// 	rotate  rotateby
+// }
 
 // LoadImage takes in a filename, reads the image if any from the location and returns it
 func LoadImage(filename string) image.Image {
@@ -101,7 +116,9 @@ func loadMultipleRandomAssets(assetNames []string) []image.Image {
 	for k, v := range assetMap {
 		if v != 0 {
 			for i := 0; i < v; i++ {
-				randAssets = append(randAssets, LoadImage(k))
+				loadedImg := LoadImage(k)
+				moddedImg := rotateAndResizeEmoji(loadedImg)
+				randAssets = append(randAssets, moddedImg)
 			}
 		}
 	}
@@ -109,8 +126,9 @@ func loadMultipleRandomAssets(assetNames []string) []image.Image {
 	return randAssets
 }
 
-func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) image.Point {
+func genRandomEmojiPos(emjBnds image.Rectangle, srcBnds image.Rectangle) image.Point {
 
+	// Random emoji positions
 	DX := srcBnds.Dx()
 	DY := srcBnds.Dy()
 
@@ -118,9 +136,39 @@ func genRandomEmojiPositions(emjBnds image.Rectangle, srcBnds image.Rectangle) i
 	dy := emjBnds.Dy()
 
 	// This is to ensure that the emoji's position does not cross the edges of the source image
-	randX := rand.Intn(DX-dx) + dx/2
-	randY := rand.Intn(DY-dy) + dy/2
+	randX := rand.Intn(DX-dx) + dx
+	randY := rand.Intn(DY-dy) + dy
 	return image.Pt(randX, randY)
+}
+
+func rotateAndResizeEmoji(emj image.Image) image.Image {
+
+	origWidth := finEmj.asset.Bounds().Dx
+	origHeight := finEmj.asset.Bounds().Dy
+
+	randXPerc := (rand.Float32() * 0.1) + 0.6                                                                                                                                                                                 )
+	randYPerc := (rand.Float32() * 0.1) + 0.6
+
+	newResizeHeight := origHeight * randXPerc
+	newResizeWidth := origWidth * randYPerc
+
+	var randAngle float32
+	randOrientation := rand.Float32()
+
+	if randOrientation < 0.5 {
+		randAngle := (rand.Float32() * 10.0) + 23.0
+	} else {
+		randAngle := (rand.Float32() * 10.0) + 330.0
+	} 
+
+	g := gift.New(
+		gift.Resize(newResizeHeight, newResizeWidth, gift.LanczosResampling),
+		gift.Rotate(randAngle, color.Transparent, gift.CubicInterpolation),
+	)
+	dst := image.NewRGBA(g.Bounds(emj.Bounds()))
+	g.Draw(dst, emj)
+
+	return dst
 }
 
 // AddEmojis is a function that will add emojis randomly to the given
@@ -135,9 +183,6 @@ func AddEmojis(src image.Image) *image.RGBA {
 	fmt.Println("Getting Asset names")
 	assets := getAssetNames("./assets/")
 	fmt.Println(assets)
-	numAssetsToUse := rand.Intn(len(assets)-1) + 1
-
-	fmt.Println("Number of assets to use - ", numAssetsToUse)
 
 	fmt.Println("Loading Random assets!")
 	// loadMultipleRandomAssets(assets)
@@ -147,7 +192,7 @@ func AddEmojis(src image.Image) *image.RGBA {
 	// Loop over the random assets and add them to the new image at random positions
 	fmt.Println("Adding random emojis to the image!")
 	for _, rAss := range randAssets {
-		randPos := genRandomEmojiPositions(rAss.Bounds(), src.Bounds())
+		randPos := genRandomEmojiPos(rAss.Bounds(), src.Bounds())
 		gift.New().DrawAt(emoImg, rAss, randPos, gift.OverOperator)
 	}
 
