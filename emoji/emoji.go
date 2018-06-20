@@ -143,23 +143,23 @@ func genRandomEmojiPos(emjBnds image.Rectangle, srcBnds image.Rectangle) image.P
 
 func rotateAndResizeEmoji(emj image.Image) image.Image {
 
-	origWidth := finEmj.asset.Bounds().Dx
-	origHeight := finEmj.asset.Bounds().Dy
+	origWidth := emj.Bounds().Dx()
+	origHeight := emj.Bounds().Dy()
 
-	randXPerc := (rand.Float32() * 0.1) + 0.6                                                                                                                                                                                 )
-	randYPerc := (rand.Float32() * 0.1) + 0.6
+	randXPerc := (rand.Float32() * 0.1) + 0.4
+	randYPerc := (rand.Float32() * 0.1) + 0.4
 
-	newResizeHeight := origHeight * randXPerc
-	newResizeWidth := origWidth * randYPerc
+	newResizeHeight := int(float32(origHeight) * randXPerc)
+	newResizeWidth := int(float32(origWidth) * randYPerc)
 
 	var randAngle float32
 	randOrientation := rand.Float32()
 
 	if randOrientation < 0.5 {
-		randAngle := (rand.Float32() * 10.0) + 23.0
+		randAngle = (rand.Float32() * 10.0) + 23.0
 	} else {
-		randAngle := (rand.Float32() * 10.0) + 330.0
-	} 
+		randAngle = (rand.Float32() * 10.0) + 330.0
+	}
 
 	g := gift.New(
 		gift.Resize(newResizeHeight, newResizeWidth, gift.LanczosResampling),
