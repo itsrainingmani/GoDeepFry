@@ -50,7 +50,7 @@ func main() {
 	fmt.Println("Welcome to the Deep Fryer")
 
 	randImgPtr := flag.Bool("r", false, "Randomly generate Deep Fry")
-	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
+	specImgPtr := flag.String("image", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
 	spNoisePtr := flag.Float64("s", 0, "Amount of Salt and Pepper Noise")
 	gausPtr := flag.Float64("g", 1, "Std Dev of Gaussian distribution")
@@ -60,7 +60,7 @@ func main() {
 	flag.Parse()
 
 	if *specImgPtr == "" {
-		fmt.Println("Please specify the path of the image you want to deep fry using the -i flag")
+		fmt.Println("Please specify the path of the image you want to deep fry using the -image flag")
 		os.Exit(0)
 	}
 
