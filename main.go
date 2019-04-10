@@ -38,9 +38,17 @@ func randMeme() image.Image {
 }
 
 func main() {
+	initString := `
+    ______          ____                        ______            
+   / ____/____     / __ \ ___   ___   ____     / ____/_____ __  __
+  / / __ / __ \   / / / // _ \ / _ \ / __ \   / /_   / ___// / / /
+ / /_/ // /_/ /  / /_/ //  __//  __// /_/ /  / __/  / /   / /_/ / 
+ \____/ \____/  /_____/ \___/ \___// .___/  /_/    /_/    \__, /  
+				  /_/                    /____/`
+	fmt.Println(initString)
 	fmt.Println("Welcome to the Deep Fryer")
 
-	randImgPtr := flag.Bool("r", false, "Random DeepFry")
+	randImgPtr := flag.Bool("r", false, "Randomly generate Deep Fry")
 	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
 	spNoisePtr := flag.Float64("s", 0, "Amount of Salt and Pepper Noise")
@@ -51,7 +59,7 @@ func main() {
 	flag.Parse()
 
 	if *randImgPtr == true && *specImgPtr != "" {
-		fmt.Println("Generating random deepfry image!")
+		fmt.Println("Picking a random Deep Fry recipe!")
 		// rImg := randMeme()
 		rImg := effects.LoadImage(*specImgPtr)
 
@@ -90,6 +98,6 @@ func main() {
 		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
 		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
 	} else {
-		fmt.Println("Improper flags selected! Use the -h flag to the right usage")
+		fmt.Println("Improper flags selected! Use the -h flag to get the right usage")
 	}
 }
