@@ -19,3 +19,4 @@ praw.ini
 
 # DeepFried Test Images
 deepfried/testImage.jpg
+!deepfried/
