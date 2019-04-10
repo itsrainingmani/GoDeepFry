@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -58,7 +59,12 @@ func main() {
 
 	flag.Parse()
 
-	if *randImgPtr == true && *specImgPtr != "" {
+	if *specImgPtr == "" {
+		fmt.Println("Please specify the path of the image you want to deep fry using the -i flag")
+		os.Exit(0)
+	}
+
+	if *randImgPtr == true {
 		fmt.Println("Picking a random Deep Fry recipe!")
 		// rImg := randMeme()
 		rImg := effects.LoadImage(*specImgPtr)
@@ -84,7 +90,7 @@ func main() {
 
 		g.Draw(dst, rImg)
 		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
-	} else if *specImgPtr != "" {
+	} else {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := effects.LoadImage(*specImgPtr)
 		g := gift.New(
@@ -95,9 +101,6 @@ func main() {
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
-		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
 		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
-	} else {
-		fmt.Println("Improper flags selected! Use the -h flag to get the right usage")
 	}
 }
