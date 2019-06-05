@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"math/rand"
+	"os"
 	"strings"
 	"time"
 
@@ -49,16 +50,22 @@ func main() {
 	fmt.Println("Welcome to the Deep Fryer")
 
 	randImgPtr := flag.Bool("r", false, "Randomly generate Deep Fry")
-	specImgPtr := flag.String("i", "", "Choose a specific image from the meme folder")
+	specImgPtr := flag.String("image", "", "Choose a specific image from the meme folder")
 	jpegQualPtr := flag.Int("q", 100, "JPEG Image quality")
 	spNoisePtr := flag.Float64("s", 0, "Amount of Salt and Pepper Noise")
 	gausPtr := flag.Float64("g", 1, "Std Dev of Gaussian distribution")
+	emojiPtr := flag.Bool("e", false, "Add emojis to meme")
 
 	// guasNoiseImgPtr := flag.Bool("g", false, "Add Gaussian noise to a test image")
 
 	flag.Parse()
 
-	if *randImgPtr == true && *specImgPtr != "" {
+	if *specImgPtr == "" {
+		fmt.Println("Please specify the path of the image you want to deep fry using the -image flag")
+		os.Exit(0)
+	}
+
+	if *randImgPtr == true {
 		fmt.Println("Picking a random Deep Fry recipe!")
 		// rImg := randMeme()
 		rImg := effects.LoadImage(*specImgPtr)
@@ -79,12 +86,14 @@ func main() {
 			gift.Gamma(gamVal),
 		)
 
-		rImg = effects.AddEmojis(rImg)
+		if *emojiPtr {
+			rImg = effects.AddEmojis(rImg)
+		}
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
 		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, gaussVal), spVal), jpegVal)
-	} else if *specImgPtr != "" {
+	} else {
 		fmt.Println("Deep Frying according to recipe")
 		rImg := effects.LoadImage(*specImgPtr)
 		g := gift.New(
@@ -92,12 +101,13 @@ func main() {
 			gift.Contrast(50),
 			gift.Gamma(1.6),
 		)
+
+		if *emojiPtr {
+			rImg = effects.AddEmojis(rImg)
+		}
 		dst := image.NewRGBA(g.Bounds(rImg.Bounds()))
 
 		g.Draw(dst, rImg)
-		// saveImage("./deepfried/testImage.jpg", noise.SaltAndPepperNoise(*dst, float32(*spNoisePtr)), *jpegQualPtr)
 		effects.SaveImage("./deepfried/testImage.jpg", effects.SaltAndPepperNoise(*effects.GaussianNoise(*dst, *gausPtr), *spNoisePtr), *jpegQualPtr)
-	} else {
-		fmt.Println("Improper flags selected! Use the -h flag to get the right usage")
 	}
 }
