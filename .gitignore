@@ -19,3 +19,6 @@ praw.ini
 
 # DeepFried Test Images
 deepfried/*
+
+# Deepfry executable artifact
+Deepfry
